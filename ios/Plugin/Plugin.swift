@@ -40,10 +40,10 @@ class WifiHandler: NSObject, CLLocationManagerDelegate {
                 self.getSSID()
                 break
             case .restricted:
-                call.reject("ERROR_LOCATION_DENIED");
+                call.reject("ERROR_LOCATION_DENIED")
                 break
             case .denied:
-                call.reject("ERROR_LOCATION_DENIED");
+                call.reject("ERROR_LOCATION_DENIED")
                 break
         }
     }
@@ -60,10 +60,10 @@ class WifiHandler: NSObject, CLLocationManagerDelegate {
         }
 
         guard let myString = ssid, !myString.isEmpty else {
-            self.call.reject("ERROR_WIFI_INFORMATION_EMPTY");
+            self.call.reject("ERROR_WIFI_INFORMATION_EMPTY")
            return
         }
-        self.call.success([
+        self.call.resolve([
            "ssid": ssid!
         ])
     }
@@ -77,10 +77,10 @@ public class Wifi: CAPPlugin {
     @objc func getIP(_ call: CAPPluginCall) {
         let address = getWiFiAddress()
         guard let myString = address, !myString.isEmpty else {
-            call.reject("ERROR_NO_WIFI_IP_AVAILABLE");
+            call.reject("ERROR_NO_WIFI_IP_AVAILABLE")
             return
         } 
-        call.success([
+        call.resolve([
             "ip": address!
         ])
     }
@@ -92,12 +92,12 @@ public class Wifi: CAPPlugin {
     }
 
     @objc func connect(_ call: CAPPluginCall) {
-        guard let ssid = call.options["ssid"] as? String else {
+        guard let ssid = call.getString("ssid") else {
             call.reject("ERROR_SSID_REQUIRED")
             return
         }
-        let password : String? = call.getString("password") ?? nil
-        let joinOnce : Bool = call.getBool("joinOnce") ?? false
+        let password: String? = call.getString("password")
+        let joinOnce: Bool = call.getBool("joinOnce") ?? false
 
         if #available(iOS 11, *) {
             var configuration : NEHotspotConfiguration
@@ -132,12 +132,12 @@ public class Wifi: CAPPlugin {
     }
 
     @objc func connectPrefix(_ call: CAPPluginCall) {
-        guard let ssid = call.options["ssid"] as? String else {
+        guard let ssid = call.getString("ssid") else {
             call.reject("ERROR_SSID_REQUIRED")
             return
         }
-        let password : String? = call.getString("password") ?? nil
-        let joinOnce : Bool = call.getBool("joinOnce") ?? false
+        let password: String? = call.getString("password")
+        let joinOnce: Bool = call.getBool("joinOnce") ?? false
 
         if #available(iOS 13, *) {
             var configuration : NEHotspotConfiguration

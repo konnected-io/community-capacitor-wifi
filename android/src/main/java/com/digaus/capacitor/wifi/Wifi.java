@@ -19,11 +19,18 @@ import com.getcapacitor.annotation.PermissionCallback;
             alias = "fineLocation",
             strings = { Manifest.permission.ACCESS_FINE_LOCATION }
         ),
+        @Permission(
+            alias = "nearbyDevices",
+            strings = { Manifest.permission.NEARBY_WIFI_DEVICES }
+        ),
     }
 )
 public class Wifi extends Plugin {
 
     private static final int API_VERSION = Build.VERSION.SDK_INT;
+
+    private static final String PERMISSION_FINE_LOCATION = "fineLocation";
+    private static final String PERMISSION_NEARBY_DEVICES = "nearbyDevices";
 
     WifiService wifiService;
 
@@ -36,47 +43,47 @@ public class Wifi extends Plugin {
     
     @PluginMethod()
     public void getIP(PluginCall call) {
-        if (API_VERSION >= 23 && getPermissionState("fineLocation") != PermissionState.GRANTED) {
-            requestPermissionForAlias("fineLocation", call, "accessFineLocation");
-        } else {
-            this.wifiService.getIP(call);
+        if (needsPermissions()) {
+            requestPermissions(call);
+            return;
         }
+        this.wifiService.getIP(call);
     }
 
     @PluginMethod()
     public void getSSID(PluginCall call) {
-        if (getPermissionState("fineLocation") != PermissionState.GRANTED) {
-            requestPermissionForAlias("fineLocation", call, "accessFineLocation");
-        } else {
-            this.wifiService.getSSID(call);
+        if (needsPermissions()) {
+            requestPermissions(call);
+            return;
         }
+        this.wifiService.getSSID(call);
     }
 
     @PluginMethod()
     public void connect(PluginCall call) {
-        if (!call.getData().has("ssid")) {
+        if (!isValidSsid(call)) {
             call.reject("Must provide an ssid");
             return;
         }
-        if (API_VERSION >= 23 && getPermissionState("fineLocation") != PermissionState.GRANTED) {
-            requestPermissionForAlias("fineLocation", call, "accessFineLocation");
-        } else {
-            this.wifiService.connect(call);
+        if (needsPermissions()) {
+            requestPermissions(call);
+            return;
         }
+        this.wifiService.connect(call);
 
     }
 
     @PluginMethod()
     public void connectPrefix(PluginCall call) {
-        if (!call.getData().has("ssid")) {
+        if (!isValidSsid(call)) {
             call.reject("Must provide an ssid");
             return;
         }
-        if (API_VERSION >= 23 && getPermissionState("fineLocation") != PermissionState.GRANTED) {
-            requestPermissionForAlias("fineLocation", call, "accessFineLocation");
-        } else {
-            this.wifiService.connectPrefix(call);
+        if (needsPermissions()) {
+            requestPermissions(call);
+            return;
         }
+        this.wifiService.connectPrefix(call);
 
     }
 
@@ -86,8 +93,8 @@ public class Wifi extends Plugin {
     }
 
     @PermissionCallback
-    private void accessFineLocation(PluginCall call) {
-        if (getPermissionState("fineLocation") == PermissionState.GRANTED) {
+    private void permissionsCallback(PluginCall call) {
+        if (!needsPermissions()) {
             if (call.getMethodName().equals("getSSID")) {
                 this.wifiService.getSSID(call);
             } else if (call.getMethodName().equals("getIP")) {
@@ -97,8 +104,31 @@ public class Wifi extends Plugin {
             } else if (call.getMethodName().equals("connectPrefix")) {
                 this.wifiService.connectPrefix(call);
             }
-        } else {
-            call.reject("User denied permission");
+            return;
         }
+        call.reject("User denied permission");
+    }
+
+    private boolean needsPermissions() {
+        if (API_VERSION >= Build.VERSION_CODES.TIRAMISU && getPermissionState(PERMISSION_NEARBY_DEVICES) != PermissionState.GRANTED) {
+            return true;
+        }
+        return API_VERSION >= Build.VERSION_CODES.M && getPermissionState(PERMISSION_FINE_LOCATION) != PermissionState.GRANTED;
+    }
+
+    private void requestPermissions(PluginCall call) {
+        if (API_VERSION >= Build.VERSION_CODES.TIRAMISU && getPermissionState(PERMISSION_NEARBY_DEVICES) != PermissionState.GRANTED) {
+            requestPermissionForAliases(new String[] { PERMISSION_FINE_LOCATION, PERMISSION_NEARBY_DEVICES }, call, "permissionsCallback");
+        } else if (API_VERSION >= Build.VERSION_CODES.M && getPermissionState(PERMISSION_FINE_LOCATION) != PermissionState.GRANTED) {
+            requestPermissionForAlias(PERMISSION_FINE_LOCATION, call, "permissionsCallback");
+        }
+    }
+
+    private boolean isValidSsid(PluginCall call) {
+        if (!call.hasOption("ssid")) {
+            return false;
+        }
+        String ssid = call.getString("ssid");
+        return ssid != null && !ssid.trim().isEmpty();
     }
 }

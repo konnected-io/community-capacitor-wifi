@@ -1,29 +1,34 @@
 import { WebPlugin } from '@capacitor/core';
 
-import type { WifiPlugin } from './definitions';
+import type {
+  ConnectOptions,
+  ConnectPrefixOptions,
+  WifiConnectionResult,
+  WifiIPResult,
+  WifiPlugin,
+} from './definitions';
 
 export class WifiWeb extends WebPlugin implements WifiPlugin {
-  async getIP(): Promise<{ ip: string | null }> {
+  async getIP(): Promise<WifiIPResult> {
     return { ip: null };
   }
 
-  async getSSID(): Promise<{ ssid: string | null }> {
+  async getSSID(): Promise<WifiConnectionResult> {
     return { ssid: null };
   }
 
-  async connect(options: { ssid: string; password?: string; authType?: string }): Promise<{ ssid: string | null }> {
-    console.log(options);
+  async connect(options: ConnectOptions): Promise<WifiConnectionResult> {
+    // Browser platform cannot manage WiFi, log so callers know it ran.
+    console.log('Wifi.connect is not supported on web.', options);
     return { ssid: null };
   }
-  async connectPrefix(options: {
-    ssid: string;
-    password?: string;
-    authType?: string;
-  }): Promise<{ ssid: string | null }> {
-    console.log(options);
+
+  async connectPrefix(options: ConnectPrefixOptions): Promise<WifiConnectionResult> {
+    console.log('Wifi.connectPrefix is not supported on web.', options);
     return { ssid: null };
   }
+
   async disconnect(): Promise<void> {
-    return;
+    // Nothing to do on web.
   }
 }

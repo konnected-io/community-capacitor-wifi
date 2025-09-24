@@ -58,7 +58,7 @@ public class WifiService {
         if (ipString != null && !ipString.equals("0.0.0.0")) {
             JSObject result = new JSObject();
             result.put("ip", ipString);
-            call.success(result);
+            call.resolve(result);
         } else {
             call.reject("NO_VALID_IP_IDENTIFIED");
         }
@@ -72,7 +72,7 @@ public class WifiService {
         if (connectedSSID != null) {
             JSObject result = new JSObject();
             result.put("ssid", connectedSSID);
-            call.success(result);
+            call.resolve(result);
         }
     }
 
@@ -169,7 +169,7 @@ public class WifiService {
             wifiManager.disconnect();
         }
         this.releasePreviousConnection();
-        call.success();
+        call.resolve();
     }
 
     private void releasePreviousConnection() {

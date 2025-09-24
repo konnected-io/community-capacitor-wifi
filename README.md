@@ -7,6 +7,7 @@
 * [`connect(...)`](#connect)
 * [`connectPrefix(...)`](#connectprefix)
 * [`disconnect()`](#disconnect)
+* [Interfaces](#interfaces)
 
 </docgen-index>
 
@@ -16,10 +17,10 @@
 ### getIP()
 
 ```typescript
-getIP() => Promise<{ ip: string | null; }>
+getIP() => Promise<WifiIPResult>
 ```
 
-**Returns:** <code>Promise&lt;{ ip: string | null; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#wifiipresult">WifiIPResult</a>&gt;</code>
 
 --------------------
 
@@ -27,10 +28,10 @@ getIP() => Promise<{ ip: string | null; }>
 ### getSSID()
 
 ```typescript
-getSSID() => Promise<{ ssid: string | null; }>
+getSSID() => Promise<WifiConnectionResult>
 ```
 
-**Returns:** <code>Promise&lt;{ ssid: string | null; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#wificonnectionresult">WifiConnectionResult</a>&gt;</code>
 
 --------------------
 
@@ -38,14 +39,14 @@ getSSID() => Promise<{ ssid: string | null; }>
 ### connect(...)
 
 ```typescript
-connect(options: { ssid: string; password?: string; joinOnce?: boolean; isHiddenSsid?: boolean; }) => Promise<{ ssid: string | null; }>
+connect(options: ConnectOptions) => Promise<WifiConnectionResult>
 ```
 
-| Param         | Type                                                                                          |
-| ------------- | --------------------------------------------------------------------------------------------- |
-| **`options`** | <code>{ ssid: string; password?: string; joinOnce?: boolean; isHiddenSsid?: boolean; }</code> |
+| Param         | Type                                                      |
+| ------------- | --------------------------------------------------------- |
+| **`options`** | <code><a href="#connectoptions">ConnectOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ ssid: string | null; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#wificonnectionresult">WifiConnectionResult</a>&gt;</code>
 
 --------------------
 
@@ -53,14 +54,14 @@ connect(options: { ssid: string; password?: string; joinOnce?: boolean; isHidden
 ### connectPrefix(...)
 
 ```typescript
-connectPrefix(options: { ssid: string; password?: string; joinOnce?: boolean; }) => Promise<{ ssid: string | null; }>
+connectPrefix(options: ConnectPrefixOptions) => Promise<WifiConnectionResult>
 ```
 
 | Param         | Type                                                                  |
 | ------------- | --------------------------------------------------------------------- |
-| **`options`** | <code>{ ssid: string; password?: string; joinOnce?: boolean; }</code> |
+| **`options`** | <code><a href="#connectprefixoptions">ConnectPrefixOptions</a></code> |
 
-**Returns:** <code>Promise&lt;{ ssid: string | null; }&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#wificonnectionresult">WifiConnectionResult</a>&gt;</code>
 
 --------------------
 
@@ -72,5 +73,46 @@ disconnect() => Promise<void>
 ```
 
 --------------------
+
+
+### Interfaces
+
+
+#### WifiIPResult
+
+| Prop     | Type                        |
+| -------- | --------------------------- |
+| **`ip`** | <code>string \| null</code> |
+
+
+#### WifiConnectionResult
+
+| Prop       | Type                        |
+| ---------- | --------------------------- |
+| **`ssid`** | <code>string \| null</code> |
+
+
+#### ConnectOptions
+
+Options for connecting to an access point. `joinOnce` is only honoured on iOS,
+while `isHiddenSsid` is only used on Android.
+
+| Prop               | Type                 |
+| ------------------ | -------------------- |
+| **`ssid`**         | <code>string</code>  |
+| **`password`**     | <code>string</code>  |
+| **`joinOnce`**     | <code>boolean</code> |
+| **`isHiddenSsid`** | <code>boolean</code> |
+
+
+#### ConnectPrefixOptions
+
+Options for prefix based connections (&gt;= Android 10 / iOS 13).
+
+| Prop           | Type                 |
+| -------------- | -------------------- |
+| **`ssid`**     | <code>string</code>  |
+| **`password`** | <code>string</code>  |
+| **`joinOnce`** | <code>boolean</code> |
 
 </docgen-api>

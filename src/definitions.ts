@@ -1,19 +1,33 @@
+export interface WifiIPResult {
+  ip: string | null;
+}
+
+export interface WifiConnectionResult {
+  ssid: string | null;
+}
+
+/**
+ * Options for connecting to an access point. `joinOnce` is only honoured on iOS,
+ * while `isHiddenSsid` is only used on Android.
+ */
+export interface ConnectOptions {
+  ssid: string;
+  password?: string;
+  joinOnce?: boolean;
+  isHiddenSsid?: boolean;
+}
+
+/** Options for prefix based connections (>= Android 10 / iOS 13). */
+export interface ConnectPrefixOptions {
+  ssid: string;
+  password?: string;
+  joinOnce?: boolean;
+}
+
 export interface WifiPlugin {
-  getIP(): Promise<{ ip: string | null }>;
-  getSSID(): Promise<{ ssid: string | null }>;
-  connect(options: {
-    ssid: string,
-    password?: string,
-    /** iOS only: https://developer.apple.com/documentation/networkextension/nehotspotconfiguration/2887518-joinonce */
-    joinOnce?: boolean,
-    /** Android only: https://developer.android.com/reference/android/net/wifi/WifiNetworkSpecifier.Builder#setIsHiddenSsid(boolean) */
-    isHiddenSsid?: boolean,
-  }): Promise<{ ssid: string | null }>;
-  connectPrefix(options: {
-    ssid: string,
-    password?: string,
-     /** iOS only: https://developer.apple.com/documentation/networkextension/nehotspotconfiguration/2887518-joinonce */
-    joinOnce?: boolean,
-  }): Promise<{ ssid: string | null }>;
+  getIP(): Promise<WifiIPResult>;
+  getSSID(): Promise<WifiConnectionResult>;
+  connect(options: ConnectOptions): Promise<WifiConnectionResult>;
+  connectPrefix(options: ConnectPrefixOptions): Promise<WifiConnectionResult>;
   disconnect(): Promise<void>;
 }
