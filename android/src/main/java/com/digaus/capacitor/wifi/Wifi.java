@@ -44,7 +44,7 @@ public class Wifi extends Plugin {
     @PluginMethod()
     public void getIP(PluginCall call) {
         if (needsPermissions()) {
-            requestPermissions(call);
+            requestRequiredPermissions(call);
             return;
         }
         this.wifiService.getIP(call);
@@ -53,7 +53,7 @@ public class Wifi extends Plugin {
     @PluginMethod()
     public void getSSID(PluginCall call) {
         if (needsPermissions()) {
-            requestPermissions(call);
+            requestRequiredPermissions(call);
             return;
         }
         this.wifiService.getSSID(call);
@@ -66,7 +66,7 @@ public class Wifi extends Plugin {
             return;
         }
         if (needsPermissions()) {
-            requestPermissions(call);
+            requestRequiredPermissions(call);
             return;
         }
         this.wifiService.connect(call);
@@ -80,7 +80,7 @@ public class Wifi extends Plugin {
             return;
         }
         if (needsPermissions()) {
-            requestPermissions(call);
+            requestRequiredPermissions(call);
             return;
         }
         this.wifiService.connectPrefix(call);
@@ -116,7 +116,7 @@ public class Wifi extends Plugin {
         return API_VERSION >= Build.VERSION_CODES.M && getPermissionState(PERMISSION_FINE_LOCATION) != PermissionState.GRANTED;
     }
 
-    private void requestPermissions(PluginCall call) {
+    private void requestRequiredPermissions(PluginCall call) {
         if (API_VERSION >= Build.VERSION_CODES.TIRAMISU && getPermissionState(PERMISSION_NEARBY_DEVICES) != PermissionState.GRANTED) {
             requestPermissionForAliases(new String[] { PERMISSION_FINE_LOCATION, PERMISSION_NEARBY_DEVICES }, call, "permissionsCallback");
         } else if (API_VERSION >= Build.VERSION_CODES.M && getPermissionState(PERMISSION_FINE_LOCATION) != PermissionState.GRANTED) {
